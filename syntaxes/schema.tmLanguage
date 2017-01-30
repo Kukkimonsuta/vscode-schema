@@ -8,6 +8,10 @@
     </array>
     <key>name</key>
     <string>SpatialOS Schema</string>
+    <key>scopeName</key>
+    <string>source.schema</string>
+    <key>uuid</key>
+    <string>8751c4b8-ddba-49e9-bc2b-692b27305ffc</string>
     <key>patterns</key>
     <array>
       <dict>
@@ -23,32 +27,27 @@
         <string>#comment</string>
       </dict>
       <dict>
+        <key>name</key>
+        <string>meta.type.type</string>
+        <key>comment</key>
+        <string>type definition</string>
         <key>begin</key>
-        <string>(type)\s+([\w]+)\s*(\{)</string>
+        <string>(type)\s+(\w+)\s*\{</string>
         <key>beginCaptures</key>
         <dict>
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>storage.modifier</string>
+            <string>storage.type</string>
           </dict>
           <key>2</key>
           <dict>
             <key>name</key>
             <string>entity.name</string>
           </dict>
-          <key>3</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.separator</string>
-          </dict>
         </dict>
-        <key>comment</key>
-        <string>type definition</string>
         <key>end</key>
         <string>\}</string>
-        <key>name</key>
-        <string>meta.type</string>
         <key>patterns</key>
         <array>
           <dict>
@@ -59,17 +58,25 @@
             <key>include</key>
             <string>#comment</string>
           </dict>
+          <dict>
+            <key>include</key>
+            <string>$self</string>
+          </dict>
         </array>
       </dict>
       <dict>
+        <key>name</key>
+        <string>meta.type.component</string>
+        <key>comment</key>
+        <string>component definition</string>
         <key>begin</key>
-        <string>(component)\s+([\w]+)\s*(\{)</string>
+        <string>(component)\s+(\w+)\s*\{</string>
         <key>beginCaptures</key>
         <dict>
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>storage.modifier</string>
+            <string>storage.type</string>
           </dict>
           <key>2</key>
           <dict>
@@ -77,12 +84,8 @@
             <string>entity.name</string>
           </dict>
         </dict>
-        <key>comment</key>
-        <string>component definition</string>
         <key>end</key>
         <string>\}</string>
-        <key>name</key>
-        <string>meta.component</string>
         <key>patterns</key>
         <array>
           <dict>
@@ -112,8 +115,12 @@
         </array>
       </dict>
       <dict>
+        <key>name</key>
+        <string>meta.type.enum</string>
+        <key>comment</key>
+        <string>enum definition</string>
         <key>begin</key>
-        <string>(enum)\s+([\w]+)\s*(\{)</string>
+        <string>(enum)\s+(\w+)\s*\{</string>
         <key>beginCaptures</key>
         <dict>
           <key>1</key>
@@ -126,23 +133,14 @@
             <key>name</key>
             <string>entity.name</string>
           </dict>
-          <key>3</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.separator</string>
-          </dict>
         </dict>
-        <key>comment</key>
-        <string>type definition</string>
         <key>end</key>
         <string>\}</string>
-        <key>name</key>
-        <string>meta.type</string>
         <key>patterns</key>
         <array>
           <dict>
             <key>include</key>
-            <string>#field</string>
+            <string>#enumField</string>
           </dict>
           <dict>
             <key>include</key>
@@ -160,7 +158,7 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>keyword.other</string>
+            <string>keyword.keyword</string>
           </dict>
           <key>2</key>
           <dict>
@@ -170,7 +168,7 @@
           <key>4</key>
           <dict>
             <key>name</key>
-            <string>keyword.other</string>
+            <string>keyword.keyword</string>
           </dict>
           <key>5</key>
           <dict>
@@ -181,7 +179,7 @@
         <key>comment</key>
         <string>command declaration</string>
         <key>match</key>
-        <string>(command)\s+(\w+)\s+([\w_]+)\s+(returns)\s+([\w\.]+)\;</string>
+        <string>(command)\s+([\w\.]+)\s+([\w_]+)\s+(returns)\s+([\w\.]+)\s*\;</string>
         <key>name</key>
         <string>meta.component.body</string>
       </dict>
@@ -214,9 +212,36 @@
         <key>comment</key>
         <string>event declaration</string>
         <key>match</key>
-        <string>(event)\s+(\w+)\s+([\w_]+)\;</string>
+        <string>(event)\s+([\w\.]+)\s+([\w_]+)\s*\;</string>
         <key>name</key>
         <string>meta.component.body</string>
+      </dict>
+      <key>enumField</key>
+      <dict>
+        <key>name</key>
+        <string>meta.type.enumField</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>keyword.operator</string>
+              </dict>
+              <key>2</key>
+              <dict>
+                <key>name</key>
+                <string>constant.numeric</string>
+              </dict>
+            </dict>
+            <key>match</key>
+            <string>[\w_]+\s*(\=)\s*(\d+)\s*\;</string>
+            <key>name</key>
+            <string>meta.type.enumField</string>
+          </dict>
+        </array>
       </dict>
       <key>field</key>
       <dict>
@@ -244,7 +269,7 @@
               </dict>
             </dict>
             <key>match</key>
-            <string>(\w+)\s+([\w_]+)\s+(\=)\s+(\d+)\;</string>
+            <string>([\w\.]+)\s+([\w_]+)\s*(\=)\s*(\d+)\s*\;</string>
             <key>name</key>
             <string>meta.type.field</string>
           </dict>
@@ -283,7 +308,7 @@
               </dict>
             </dict>
             <key>match</key>
-            <string>(map)\&lt;(\w+)(\,)\s*(\w+)\&gt;\s+([\w_]+)\s+(\=)\s+(\d+)\;</string>
+            <string>(map)\&lt;([\w\.]+)(\,)\s*([\w\.]+)\&gt;\s+([\w_]+)\s*(\=)\s*(\d+)\s*\;</string>
             <key>name</key>
             <string>meta.type.field</string>
           </dict>
@@ -312,7 +337,7 @@
               </dict>
             </dict>
             <key>match</key>
-            <string>(list)\&lt;(\w+)\&gt;\s+([\w_]+)\s+(\=)\s+(\d+)\;</string>
+            <string>(list)\&lt;([\w\.]+)\&gt;\s+([\w_]+)\s*(\=)\s*(\d+)\s*\;</string>
             <key>name</key>
             <string>meta.type.field</string>
           </dict>
@@ -341,7 +366,31 @@
               </dict>
             </dict>
             <key>match</key>
-            <string>(option)\&lt;(\w+)\&gt;\s+([\w_]+)\s+(\=)\s+(\d+)\;</string>
+            <string>(option)\&lt;([\w\.]+)\&gt;\s+([\w_]+)\s*(\=)\s*(\d+)\s*\;</string>
+            <key>name</key>
+            <string>meta.type.field</string>
+          </dict>
+          <dict>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>keyword.other</string>
+              </dict>
+              <key>4</key>
+              <dict>
+                <key>name</key>
+                <string>keyword.operator</string>
+              </dict>
+              <key>5</key>
+              <dict>
+                <key>name</key>
+                <string>constant.boolean</string>
+              </dict>
+            </dict>
+            <key>match</key>
+            <string>(option)\s+([\w_]+)\s*(\=)\s*(true|false)\s*\;</string>
             <key>name</key>
             <string>meta.type.field</string>
           </dict>
@@ -369,7 +418,7 @@
         <key>comment</key>
         <string>id declaration</string>
         <key>match</key>
-        <string>(id)\s*(\=)\s*(\d+)\;</string>
+        <string>(id)\s*(\=)\s*(\d+)\s*\;</string>
         <key>name</key>
         <string>meta.component.body</string>
       </dict>
@@ -391,7 +440,7 @@
         <key>comment</key>
         <string>import company.package;</string>
         <key>match</key>
-        <string>(import)\s+("[\w\/]+[a-zA-Z0-9_]+\.schema")(;)</string>
+        <string>(import)\s+("[\w\/]+[a-zA-Z0-9_]+\.schema")\s*\;</string>
         <key>name</key>
         <string>meta.import</string>
       </dict>
@@ -413,7 +462,7 @@
         <key>comment</key>
         <string>package company.package;</string>
         <key>match</key>
-        <string>(package)\s+([\w\.]+)(;)</string>
+        <string>(package)\s+([\w\.]+)\s*\;</string>
         <key>name</key>
         <string>meta.package</string>
       </dict>
@@ -434,6 +483,13 @@
         <key>name</key>
         <string>meta.declaration.body</string>
       </dict>
+      <key>constant</key>
+      <dict>
+        <key>name</key>
+        <string>constant.boolean</string>
+        <key>match</key>
+        <string>(true|false)</string>
+      </dict>
       <key>storage</key>
       <dict>
         <key>captures</key>
@@ -441,7 +497,7 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>keyword.other</string>
+            <string>keyword.other.data</string>
           </dict>
           <key>2</key>
           <dict>
@@ -452,14 +508,10 @@
         <key>comment</key>
         <string>data declaration</string>
         <key>match</key>
-        <string>(data)\s+(\w+)\;</string>
+        <string>(data)\s+([\w\.]+)\s*\;</string>
         <key>name</key>
         <string>meta.component.body</string>
       </dict>
     </dict>
-    <key>scopeName</key>
-    <string>source.schema</string>
-    <key>uuid</key>
-    <string>8751c4b8-ddba-49e9-bc2b-692b27305ffc</string>
   </dict>
 </plist>
