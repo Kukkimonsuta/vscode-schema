@@ -2,10 +2,10 @@
     "name": "vscode-schema",
     "displayName": "Schema language support",
     "description": "Language support for the Improbable SpatialOS schema language",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "repository": {
-      "type": "git",
-      "url": "https://github.com/Kukkimonsuta/vscode-schema.git"
+        "type": "git",
+        "url": "https://github.com/Kukkimonsuta/vscode-schema.git"
     },
     "publisher": "kukkino",
     "engines": {
@@ -15,16 +15,25 @@
         "Languages"
     ],
     "contributes": {
-        "languages": [{
-            "id": "schema",
-            "aliases": ["Schema", "schema"],
-            "extensions": [".schema"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "schema",
-            "scopeName": "source.schema",
-            "path": "./syntaxes/schema.tmLanguage"
-        }]
+        "languages": [
+            {
+                "id": "schema",
+                "aliases": [
+                    "Schema",
+                    "schema"
+                ],
+                "extensions": [
+                    ".schema"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "schema",
+                "scopeName": "source.schema",
+                "path": "./syntaxes/schema.tmLanguage"
+            }
+        ]
     }
 }
