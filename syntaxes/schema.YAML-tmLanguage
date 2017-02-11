@@ -11,185 +11,257 @@ patterns:
     -
         include: '#comment'
     -
-        name: meta.type.type
-        comment: 'type definition'
-        begin: '(type)\s+(\w+)\s*\{'
+        include: '#enum-declaration'
+    -
+        include: '#type-declaration'
+    -
+        include: '#component-declaration'
+repository:
+    package:
+        name: meta.package
+        match: '(package)(\s+([\w\.]+)\s*(;)?)?'
+        captures:
+            '1':
+                name: keyword.other.package.schema
+            '3':
+                name: entity.name.type.package.schema
+            '4':
+                name: punctuation.terminator.statement.schema
+    import:
+        name: meta.import
+        match: '(import)(\s+("[\w\.\/-]*")\s*(;)?)?'
+        captures:
+            '1':
+                name: keyword.other.import.schema
+            '3':
+                name: string.quoted.double.schema
+            '4':
+                name: punctuation.terminator.statement.schema
+    line-comment:
+        name: comment.line.double-slash.schema
+        begin: '//'
+        beginCaptures:
+            '0':
+                name: punctuation.definition.comment.schema
+        end: '$\n?'
+    block-comment:
+        name: comment.block.schema
+        begin: '/\*'
+        beginCaptures:
+            '0':
+                name: punctuation.definition.comment.schema
+        end: '\*/'
+        endCaptures:
+            '0':
+                name: punctuation.definition.comment.schema
+    comment:
+        patterns:
+            -
+                include: '#block-comment'
+            -
+                include: '#line-comment'
+    type-builtin:
+        match: '\b(bool|uint32|uint64|int32|int64|sint32|sint64|fixed32|fixed64|sfixed32|sfixed64|float|double|string|bytes|Coordinates|Vector3d|Vector3f|EntityId|EntityPosition)\b'
+        captures:
+            '1':
+                name: keyword.type.schema
+    type-generic:
+        begin: '\b(map|list|option)(<)\s*'
         beginCaptures:
             '1':
-                name: storage.type
+                name: keyword.type.schema
             '2':
-                name: entity.name
-        end: '\}'
+                name: punctuation.definition.typeparameters.begin.schema
+        end: '\s*(>)'
+        endCaptures:
+            '1':
+                name: punctuation.definition.typeparameters.end.schema
         patterns:
+            -
+                include: '#type'
+            -
+                match: '\s*(,)\s*'
+                captures:
+                    '1':
+                        name: punctuation.separator.comma.schema
+    type-custom:
+        match: '\b(\w+(?:\.\w+)*)\b'
+        captures:
+            '1':
+                name: storage.type.schema
+    type:
+        patterns:
+            -
+                include: '#type-generic'
+            -
+                include: '#type-builtin'
+            -
+                include: '#type-custom'
+    constant:
+        name: constant.language.boolean.schema
+        match: '\b(true|false)\b'
+    enum-member:
+        name: meta.enum.member
+        match: '(\w+)\s*((\=)\s*((\d+)\s*(\;)?)?)?'
+        captures:
+            '1':
+                name: entity.name.variable.enum-member.schema
+            '3': 
+                name: keyword.operator.assignment.schema
+            '5': 
+                name: constant.numeric.integer.schema
+            '6':
+                name: punctuation.terminator.statement.schema
+    enum-declaration:
+        name: meta.enum
+        begin: '(enum)(\s+(\w+)\s*(\{)?)?'
+        beginCaptures:
+            '1':
+                name: keyword.other.enum.schema
+            '3':
+                name: entity.name.type.enum.schema
+            '4':
+                name: punctuation.curlybrace.open.schema
+        end: '\}'
+        endCaptures:
+            '0':
+                name: punctuation.curlybrace.close.schema
+        patterns:
+            -
+                include: '#enum-member'
+            -
+                include: '#comment'
+    field:
+        # note: doesn't support generic inside generic
+        match: '((?:\w+(?:\.\w+)*)(?:\<[\w\s,\.]+\>)?)(?:\s+(\w+)(?:\s*(\=)(?:\s*(\d+)\s*(\;)?)?)?)?'
+        captures:
+            '1': 
+                patterns:
+                    -
+                        include: '#type'
+            '2':    
+                name: entity.name.variable.member.schema
+            '3':
+                name: keyword.operator.assignment.schema
+            '4':
+                name: constant.numeric.integer.schema
+            '5':
+                name: punctuation.terminator.statement.schema
+    type-declaration:
+        name: meta.type
+        begin: '(type)(\s+(\w+)\s*(\{)?)?'
+        beginCaptures:
+            '1':
+                name: keyword.other.type.schema
+            '3':
+                name: entity.name.type.type.schema
+            '4':
+                name: punctuation.curlybrace.open.schema
+        end: '\}'
+        endCaptures:
+            '0':
+                name: punctuation.curlybrace.close.schema
+        patterns:
+            -
+                include: '$self'
             -
                 include: '#field'
             -
                 include: '#comment'
-            -
-                include: '$self'
-    -
-        name: meta.type.component
-        comment: 'component definition'
-        begin: '(component)\s+(\w+)\s*\{'
+    id:
+        match: '(id)(?:\s*(\=)(?:\s*(\d+)\s*(\;)?)?)?'
+        captures:
+            '1':
+                name: entity.name.variable.member.schema
+            '2':
+                name: keyword.operator.assignment.schema
+            '3':
+                name: constant.numeric.integer.schema
+            '4':
+                name: punctuation.terminator.statement.schema
+    command:
+        match: '(command)(?:\s+((?:\w+(?:\.\w+)*)(?:\<[\w\s,\.]+\>)?)(?:\s+(\w+)(?:\s+(returns)(?:\s+((?:\w+(?:\.\w+)*)(?:\<[\w\s,\.]+\>)?)\s*(\;)?)?)?)?)?'
+        captures:
+            '1':
+                name: keyword.other.command.schema
+            '2':
+                patterns:
+                    -
+                        include: '#type'
+            '3':
+                name: entity.name.variable.member.schema
+            '4':
+                name: keyword.other.command-returns.schema
+            '5':
+                patterns:
+                    -
+                        include: '#type'
+            '6':
+                name: punctuation.terminator.statement.schema
+    event:
+        match: '(event)(?:\s+((?:\w+(?:\.\w+)*)(?:\<[\w\s,\.]+\>)?)(?:\s+(\w+)\s*(\;)?)?)?'
+        captures:
+            '1':
+                name: keyword.other.event.schema
+            '2':
+                patterns:
+                    -
+                        include: '#type'
+            '3':
+                name: entity.name.variable.member.schema
+            '4':
+                name: punctuation.terminator.statement.schema
+    option:
+        match: '(option)(?:\s+(\w+)(?:\s*(\=)(?:\s*(\w+)\s*(\;)?)?)?)?'
+        captures:
+            '1': 
+                name: keyword.other.option.
+            '2':
+                name: entity.name.variable.member.schema
+            '3': 
+                name: keyword.operator.assignment.schema
+            '4':
+                patterns:
+                    -
+                        include: '#constant'
+            '5':
+                name: punctuation.terminator.statement.schema
+    data:
+        name: meta.component.body
+        match: '(data)(?:\s+((?:\w+(?:\.\w+)*)(?:\<[\w\s,\.]+\>)?)\s*(\;)?)?'
+        captures:
+            '1':
+                name: keyword.other.data.schema
+            '2':
+                patterns:
+                    -
+                        include: '#type'
+            '3':
+                name: punctuation.terminator.statement.schema
+    component-declaration:
+        name: meta.component
+        begin: '(component)(?:\s+(\w+)\s*(\{)?)?'
         beginCaptures:
             '1':
-                name: storage.type
+                name: keyword.other.component.schema
             '2':
-                name: entity.name
+                name: entity.name.type.component.schema
+            '3':
+                name: punctuation.curlybrace.open.schema
         end: '\}'
+        endCaptures:
+            '0':
+                name: punctuation.curlybrace.close.schema
         patterns:
-            -
-                include: '#storage'
             -
                 include: '#id'
             -
                 include: '#command'
             -
-                include: '#comment'
+                include: '#data'
             -
                 include: '#event'
             -
                 include: '#field'
-    -
-        name: meta.type.enum
-        comment: 'enum definition'
-        begin: '(enum)\s+(\w+)\s*\{'
-        beginCaptures:
-            '1':
-                name: storage.type
-            '2':
-                name: entity.name
-        end: '\}'
-        patterns:
-            -
-                include: '#enumField'
             -
                 include: '#comment'
-repository:
-    command:
-        captures:
-            '1':
-                name: keyword.keyword
-            '2':
-                name: storage.type.data
-            '4':
-                name: keyword.keyword
-            '5':
-                name: storage.type.data
-        comment: 'command declaration'
-        match: '(command)\s+([\w\.]+)\s+([\w_]+)\s+(returns)\s+([\w\.]+)\s*\;'
-        name: meta.component.body
-    comment:
-        begin: '//'
-        comment: 'a schema comment'
-        end: '$\n?'
-        name: comment.line.double-slash
-    event:
-        captures:
-            '1':
-                name: keyword.other
-            '2':
-                name: storage.type.data
-        comment: 'event declaration'
-        match: '(event)\s+([\w\.]+)\s+([\w_]+)\s*\;'
-        name: meta.component.body
-    enumField:
-        name: meta.type.enumField
-        patterns:
-            -
-                captures:
-                    '1': {name: keyword.operator}
-                    '2': {name: constant.numeric}
-                match: '[\w_]+\s*(\=)\s*(\d+)\s*\;'
-                name: meta.type.enumField        
-    field:
-        comment: 'field definition'
-        patterns:
-            -
-                captures:
-                    '1': {name: storage.type}
-                    '3': {name: keyword.operator}
-                    '4': {name: constant.numeric}
-                match: '([\w\.]+)\s+([\w_]+)\s*(\=)\s*(\d+)\s*\;'
-                name: meta.type.field
-            -
-                captures:
-                    '1': {name: storage.type}
-                    '2': {name: storage.type}
-                    '3': {name: punctuation.separator}
-                    '4': {name: storage.type}
-                    '6': {name: keyword.operator}
-                    '7': {name: constant.numeric}
-                match: '(map)\<([\w\.]+)(\,)\s*([\w\.]+)\>\s+([\w_]+)\s*(\=)\s*(\d+)\s*\;'
-                name: meta.type.field
-            -
-                captures:
-                    '1': {name: storage.type}
-                    '2': {name: storage.type}
-                    '4': {name: keyword.operator}
-                    '5': {name: constant.numeric}
-                match: '(list)\<([\w\.]+)\>\s+([\w_]+)\s*(\=)\s*(\d+)\s*\;'
-                name: meta.type.field
-            -
-                captures:
-                    '1': {name: storage.type}
-                    '2': {name: storage.type}
-                    '4': {name: keyword.operator}
-                    '5': {name: constant.numeric}
-                match: '(option)\<([\w\.]+)\>\s+([\w_]+)\s*(\=)\s*(\d+)\s*\;'
-                name: meta.type.field
-            -
-                captures:
-                    '1': {name: keyword.other}
-                    '4': {name: keyword.operator}
-                    '5': {name: constant.boolean}
-                match: '(option)\s+([\w_]+)\s*(\=)\s*(true|false)\s*\;'
-                name: meta.type.field
-            -
-                include: '#primitive'
-    id:
-        captures:
-            '2':
-                name: keyword.operator
-            '3':
-                name: constant.numeric
-        comment: 'id declaration'
-        match: '(id)\s*(\=)\s*(\d+)\s*\;'
-        name: meta.component.body
-    import:
-        captures:
-            '1':
-                name: keyword.other.import
-            '2':
-                name: support.class.import
-        comment: 'import company.package;'
-        match: '(import)\s+("[\w\/]+[a-zA-Z0-9_]+\.schema")\s*\;'
-        name: meta.import
-    package:
-        captures:
-            '1':
-                name: keyword.other.package
-            '2':
-                name: support.other.package
-        comment: 'package company.package;'
-        match: '(package)\s+([\w\.]+)\s*\;'
-        name: meta.package
-    primitive:
-        captures:
-            '1':
-                name: storage.type.primitive
-        comment: 'built in data type'
-        match: '\b(bool|uint32|uint64|int32|int64|sint32|sint64|fixed32|fixed64|sfixed32|sfixed64|float|double|string|bytes|Coordinates|Vector3d|Vector3f|EntityId|EntityPosition|option|map)\b'
-        name: meta.declaration.body
-    constant:
-        name: constant.boolean
-        match: '(true|false)'
-    storage:
-        captures:
-            '1':
-                name: keyword.other.data
-            '2':
-                name: storage.type.data
-        comment: 'data declaration'
-        match: '(data)\s+([\w\.]+)\s*\;'
-        name: meta.component.body

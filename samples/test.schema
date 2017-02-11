@@ -1,0 +1,62 @@
+package improbable.example;
+package improbable.example_with_underscores;
+
+import "/absolute/path.schema";
+import "./relative/path.schema";
+import "implicit/path.schema";
+import "with_underscores/path.schema";
+import "with-dash/path.schema";
+import "no-extension";
+
+// line comment
+/* block comment */
+/*
+  multiline block
+  comment
+*/
+import "improbable.stuff"; // rest of line comment
+
+enum Colour_ {
+  RED_ = 0;
+  GR_EEN = 1;
+  _BLUE = 2;
+}
+
+type Movement_ {
+  type Nested_ {
+    int32 nested_int = 1;
+  }
+
+  // line comment
+  /*
+    block comment
+  */
+
+  Cook_ies test = 2;
+  b.cookies test333 = 3;
+  Coordinates target_position = 4;
+  Vector3d target_direction = 5;
+  map<int32, a.Cookies> test = 6;
+  option<Cookies> test3 = 7;
+}
+
+type SomeData {
+  int32 value = 1;
+}
+
+component Switch {
+  id = 1234;
+  bool is_enabled = 1;
+  
+  event SwitchToggled toggled_stuff;
+  event option<int32> toggled_bar;
+
+  command AddResource add_resource returns improbable.core.Nothing;
+  command option<int32> add_resource returns improbable.core.Nothing;
+  command map<foo, bar.stuff> add_resource returns map<foo, bar.stuff>;
+}
+
+component AnotherComponent {
+  id = 1235;
+  data SomeData;
+}
