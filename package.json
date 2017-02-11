@@ -2,7 +2,7 @@
     "name": "vscode-schema",
     "displayName": "Schema language support",
     "description": "Language support for the Improbable SpatialOS schema language",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/Kukkimonsuta/vscode-schema.git"
