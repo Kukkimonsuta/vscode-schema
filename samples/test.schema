@@ -54,6 +54,10 @@ component Switch {
   command AddResource add_resource returns improbable.core.Nothing;
   command option<int32> add_resource returns improbable.core.Nothing;
   command map<foo, bar.stuff> add_resource returns map<foo, bar.stuff>;
+
+  command AddResource add_resource(improbable.core.Nothing);
+  command option<int32> add_resource(improbable.core.Nothing);
+  command map<foo, bar.stuff> add_resource(map<foo, bar.stuff>);
 }
 
 component AnotherComponent {
