@@ -440,6 +440,59 @@
       <key>command</key>
       <dict>
         <key>match</key>
+        <string>(command)(?:\s+((?:\w+(?:\.\w+)*)(?:\&lt;[\w\s,\.]+\&gt;)?)(?:\s+(\w+)(?:\s*(?:(\()((?:\w+(?:\.\w+)*)(?:\&lt;[\w\s,\.]+\&gt;)?)(?:(\))\s*(\;)?)?)?)?)?)?</string>
+        <key>captures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.command.schema</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#type</string>
+              </dict>
+            </array>
+          </dict>
+          <key>3</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.variable.member.schema</string>
+          </dict>
+          <key>4</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.parenthesis.open.schema</string>
+          </dict>
+          <key>5</key>
+          <dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#type</string>
+              </dict>
+            </array>
+          </dict>
+          <key>6</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.parenthesis.close.schema</string>
+          </dict>
+          <key>7</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.terminator.statement.schema</string>
+          </dict>
+        </dict>
+      </dict>
+      <key>command-legacy</key>
+      <dict>
+        <key>match</key>
         <string>(command)(?:\s+((?:\w+(?:\.\w+)*)(?:\&lt;[\w\s,\.]+\&gt;)?)(?:\s+(\w+)(?:\s+(returns)(?:\s+((?:\w+(?:\.\w+)*)(?:\&lt;[\w\s,\.]+\&gt;)?)\s*(\;)?)?)?)?)?</string>
         <key>captures</key>
         <dict>

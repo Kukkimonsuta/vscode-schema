@@ -180,6 +180,27 @@ repository:
             '4':
                 name: punctuation.terminator.statement.schema
     command:
+        match: '(command)(?:\s+((?:\w+(?:\.\w+)*)(?:\<[\w\s,\.]+\>)?)(?:\s+(\w+)(?:\s*(?:(\()((?:\w+(?:\.\w+)*)(?:\<[\w\s,\.]+\>)?)(?:(\))\s*(\;)?)?)?)?)?)?'
+        captures:
+            '1':
+                name: keyword.other.command.schema
+            '2':
+                patterns:
+                    -
+                        include: '#type'
+            '3':
+                name: entity.name.variable.member.schema
+            '4':
+                name: punctuation.parenthesis.open.schema
+            '5':
+                patterns:
+                    -
+                        include: '#type'
+            '6':
+                name: punctuation.parenthesis.close.schema
+            '7':
+                name: punctuation.terminator.statement.schema
+    command-legacy:
         match: '(command)(?:\s+((?:\w+(?:\.\w+)*)(?:\<[\w\s,\.]+\>)?)(?:\s+(\w+)(?:\s+(returns)(?:\s+((?:\w+(?:\.\w+)*)(?:\<[\w\s,\.]+\>)?)\s*(\;)?)?)?)?)?'
         captures:
             '1':
