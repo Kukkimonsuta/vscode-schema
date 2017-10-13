@@ -60,6 +60,19 @@ component Switch {
   command map<foo, bar.stuff> add_resource(map<foo, bar.stuff>);
 }
 
+	
+component PlayerState {
+  id = 1234;
+  transient list<Move> moves_to_process = 1;
+  transient map<AbilityName, Ability> active_abilities = 2;
+  Score score = 3;
+}
+ 
+type Score {
+  transient option<int32> deployment_score = 1;
+  int32 alltime_score = 2;
+}
+
 component AnotherComponent {
   id = 1235;
   data SomeData;

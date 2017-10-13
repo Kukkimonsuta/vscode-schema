@@ -97,6 +97,27 @@ repository:
                 include: '#type-builtin'
             -
                 include: '#type-custom'
+    transient-type:
+        begin: '\b(transient)\s+(map|list|option)(<)\s*'
+        beginCaptures:
+            '1':
+                name: keyword.other.transient.schema
+            '2':
+                name: keyword.type.schema
+            '3':
+                name: punctuation.definition.typeparameters.begin.schema
+        end: '\s*(>)'
+        endCaptures:
+            '1':
+                name: punctuation.definition.typeparameters.end.schema
+        patterns:
+            -
+                include: '#type'
+            -
+                match: '\s*(,)\s*'
+                captures:
+                    '1':
+                        name: punctuation.separator.comma.schema
     constant:
         name: constant.language.boolean.schema
         match: '\b(true|false)\b'
@@ -133,10 +154,12 @@ repository:
                 include: '#comment'
     field:
         # note: doesn't support generic inside generic
-        match: '((?:\w+(?:\.\w+)*)(?:\<[\w\s,\.]+\>)?)(?:\s+(\w+)(?:\s*(\=)(?:\s*(\d+)\s*(\;)?)?)?)?'
+        match: '((?:transient\s+)?(?:\w+(?:\.\w+)*)(?:\<[\w\s,\.]+\>)?)(?:\s+(\w+)(?:\s*(\=)(?:\s*(\d+)\s*(\;)?)?)?)?'
         captures:
             '1': 
                 patterns:
+                    -
+                        include: '#transient-type'
                     -
                         include: '#type'
             '2':    
@@ -236,7 +259,7 @@ repository:
         match: '(option)(?:\s+(\w+)(?:\s*(\=)(?:\s*(\w+)\s*(\;)?)?)?)?'
         captures:
             '1': 
-                name: keyword.other.option.
+                name: keyword.other.option.schema
             '2':
                 name: entity.name.variable.member.schema
             '3': 
