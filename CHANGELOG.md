@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "schema" extension will be documented in this file.
 
+## 0.4.1
+- Add `transient` keyword
+
 ## 0.4.0
 - Added support for new style commands `command OutputType command_name(InputType);`
 
