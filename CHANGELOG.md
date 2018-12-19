@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "schema" extension will be documented in this file.
 
+## 0.5.0
+- Add annotation support
+
 ## 0.4.1
 - Add `transient` keyword
 
