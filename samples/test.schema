@@ -77,3 +77,32 @@ component AnotherComponent {
   id = 1235;
   data SomeData;
 }
+
+// Note: You can use either SomeAnnotation or SomeAnnotation() for an empty schema type.
+[SomeAnnotation]  // Annotating the enum definition 'Color'.
+enum Color {
+  [SomeAnnotation()]  // Annotating the enum value definition 'RED'.
+  RED = 0;
+}
+ 
+[SomeAnnotation]  // Annotating the schema type 'SomeDataType'.
+type SomeDataType {
+  // Note: You can use a type for annotation regardless of where the type is declared.
+  [Nested(1)]  // Annotating the schema type 'Nested' with itself.
+  type Nested {int32 a = 1;}
+ 
+  [SomeAnnotation]  // Annotating the field 'some_field'.
+  option<int32> some_field = 1;
+}
+	
+// Note: Type names are interpreted according to the current scope,
+//       though you can also use fully-qualified names.
+[ComplexType(true, 32, 5.0, "foo", "bar", 5, ComplexType.Nested(50), SomeEnum.FOO)]
+type AnnotatedType1 {}
+ 
+// Note: '_' is used for an empty option.
+[Collections(option_value = _, list_value = [], map_value = {})]
+type AnnotatedType2 {}
+ 
+[Collections(option_value = 1, list_value = [1, 2], map_value = {"foo":1, "bar":2})]
+type AnnotatedType3 {}

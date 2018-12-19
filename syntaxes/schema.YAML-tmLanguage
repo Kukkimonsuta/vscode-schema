@@ -11,6 +11,8 @@ patterns:
     -
         include: '#comment'
     -
+        include: '#annotation-declaration'
+    -
         include: '#enum-declaration'
     -
         include: '#type-declaration'
@@ -118,9 +120,128 @@ repository:
                 captures:
                     '1':
                         name: punctuation.separator.comma.schema
-    constant:
+    reference-with-params:
+        name: meta.reference
+        begin: '(\w+(?:\.\w+))\s*(\()\s*'
+        beginCaptures:
+            '1':
+                name: entity.name.type.reference.schema
+            '2':
+                name: punctuation.parenthesis.open.schema
+        end: '\s*(\))'
+        endCaptures:
+            '1':
+                name: punctuation.parenthesis.close.schema
+        patterns:
+            -
+                include: '#argument'
+            -
+                include: '#separator-comma'
+    named-argument:
+        name: meta.named-argument
+        begin: '(\w+)\s*(=)\s*'
+        beginCaptures:
+            '1':
+                name: variable.name.schema
+            '2':
+                name: keyword.operator.assignment.schema
+        end: '(?=,|\))'
+        patterns:
+            -
+                include: '#constant'
+    argument:
+        patterns:
+            -
+                include: '#named-argument'
+            -
+                include: '#constant'
+    reference-without-params:
+        name: meta.reference
+        match: '(\w+(?:\.\w+)*)'
+        captures:
+            '1':
+                name: entity.name.type.reference.schema
+    reference:
+        patterns:
+            -
+                include: '#reference-with-params'
+            -
+                include: '#reference-without-params'
+    separator-comma:
+        name: punctuation.separator.comma.schema
+        match: ','
+    separator-colon:
+        name: punctuation.separator.colon.schema
+        match: ':'
+    constant-empty:
+        name: constant.language.empty.schema
+        match: '\b_\b'
+    constant-boolean:
         name: constant.language.boolean.schema
         match: '\b(true|false)\b'
+    constant-integer:
+        name: constant.numeric.integer.schema
+        match: '\b([0-9]+)\b'
+    constant-float:
+        name: constant.numeric.floating.schema
+        match: '\b((?:[0-9]+\.[0-9]*)|(?:[0-9]*\.[0-9]+))\b'
+    constant-string:
+        name: string.quoted.double.schema
+        match: '(\")([^\"]*)(\")'
+    constant-numeric:
+        patterns:
+            -
+                include: '#constant-float'
+            -
+                include: '#constant-integer'
+    constant-list:
+        name: meta.list
+        begin: '(\[)\s*'
+        beginCaptures:
+            '1':
+                name: punctuation.bracket.open.schema
+        end: '\s*(\])'
+        endCaptures:
+            '1':
+                name: punctuation.bracket.close.schema
+        patterns:
+            -
+                include: '#constant'
+            -
+                include: '#separator-comma'
+    constant-map:
+        name: meta.map
+        begin: '(\{)\s*'
+        beginCaptures:
+            '1':
+                name: punctuation.curlybrace.open.schema
+        end: '\s*(\})'
+        endCaptures:
+            '1':
+                name: punctuation.curlybrace.close.schema
+        patterns:
+            -
+                include: '#constant'
+            -
+                include: '#separator-comma'
+            -
+                include: '#separator-colon'
+    constant:
+        patterns:
+            -
+                include: '#reference-with-params'
+            -
+                include: '#constant-empty'
+            -
+                include: '#constant-boolean'
+            -
+                include: '#constant-numeric'
+            -
+                include: '#constant-string'
+            -
+                include: '#constant-list'
+            -
+                include: '#reference-without-params'
     enum-member:
         name: meta.enum.member
         match: '(\w+)\s*((\=)\s*((\d+)\s*(\;)?)?)?'
@@ -148,6 +269,8 @@ repository:
             '0':
                 name: punctuation.curlybrace.close.schema
         patterns:
+            -
+                include: '#annotation-declaration'
             -
                 include: '#enum-member'
             -
@@ -255,21 +378,6 @@ repository:
                 name: entity.name.variable.member.schema
             '4':
                 name: punctuation.terminator.statement.schema
-    option:
-        match: '(option)(?:\s+(\w+)(?:\s*(\=)(?:\s*(\w+)\s*(\;)?)?)?)?'
-        captures:
-            '1': 
-                name: keyword.other.option.schema
-            '2':
-                name: entity.name.variable.member.schema
-            '3': 
-                name: keyword.operator.assignment.schema
-            '4':
-                patterns:
-                    -
-                        include: '#constant'
-            '5':
-                name: punctuation.terminator.statement.schema
     data:
         name: meta.component.body
         match: '(data)(?:\s+((?:\w+(?:\.\w+)*)(?:\<[\w\s,\.]+\>)?)\s*(\;)?)?'
@@ -282,6 +390,45 @@ repository:
                         include: '#type'
             '3':
                 name: punctuation.terminator.statement.schema
+    annotation-declaration-with-params:
+        name: meta.annotation
+        begin: '(\[)\s*(\w+)\s*(\()\s*'
+        beginCaptures:
+            '1':
+                name: punctuation.bracket.open.schema
+            '2':
+                name: entity.name.type.annotation.schema
+            '3':
+                name: punctuation.parenthesis.open.schema
+        end: '\s*(\))\s*(\])'
+        endCaptures:
+            '1':
+                name: punctuation.parenthesis.close.schema
+            '2':
+                name: punctuation.bracket.close.schema
+        patterns:
+            -
+                include: '#argument'
+            -
+                include: '#separator-comma'
+    annotation-declaration-without-params:
+        name: meta.annotation
+        begin: '(\[)\s*(\w+)\s*'
+        beginCaptures:
+            '1':
+                name: punctuation.bracket.open.schema
+            '2':
+                name: entity.name.type.annotation.schema
+        end: '\s*(\])'
+        endCaptures:
+            '1':
+                name: punctuation.bracket.close.schema
+    annotation-declaration:
+        patterns:
+            -
+                include: '#annotation-declaration-with-params'
+            -
+                include: '#annotation-declaration-without-params'
     component-declaration:
         name: meta.component
         begin: '(component)(?:\s+(\w+)\s*(\{)?)?'
